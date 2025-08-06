@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Câmera Excel</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #camera-container {
+            border: 2px solid #ccc;
+            width: 90%;
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+        video {
+            width: 100%;
+            height: auto;
+        }
+        #capture-button {
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="camera-container">
+        <video id="video" autoplay></video>
+    </div>
+    <input type="file" accept="image/*" capture="environment" style="display: none;" id="camera-input">
+    <button id="capture-button">Tirar Foto</button>
+
+    <script>
+        const video = document.getElementById('video');
+        const captureButton = document.getElementById('capture-button');
+        const cameraInput = document.getElementById('camera-input');
+
+        captureButton.addEventListener('click', () => {
+            cameraInput.click();
+        });
+
+        // Tenta acessar a câmera traseira (environment)
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } } })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Erro ao acessar a câmera: ", err);
+                // Se falhar, tenta acessar qualquer câmera disponível
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(stream => {
+                        video.srcObject = stream;
+                    })
+                    .catch(err2 => {
+                        console.error("Erro ao acessar qualquer câmera: ", err2);
+                        alert("Não foi possível acessar a câmera do seu dispositivo.");
+                    });
+            });
+    </script>
+
+</body>
+</html>
